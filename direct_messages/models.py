@@ -5,7 +5,7 @@ from config import settings
 
 class ChattingRoom(DateTimeModel):
     users = models.ManyToManyField(
-        "users.User",
+        settings.AUTH_USER_MODEL,
         related_name="chatting_rooms",
     )
 
