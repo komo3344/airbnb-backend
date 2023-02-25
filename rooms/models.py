@@ -1,4 +1,7 @@
 from django.db import models
+from django.db.models import Avg, FloatField
+from django.db.models.functions import Coalesce
+
 from common.models import DateTimeModel
 from config import settings
 
@@ -59,14 +62,11 @@ class Room(DateTimeModel):
         return self.amenities.count()
 
     def rating(self):
-        count = self.reviews.count()
-        if count == 0:
+        average_rating = self.reviews.aggregate(Avg('rating'))['rating__avg']
+        if average_rating is None:
             return "No Reviews"
         else:
-            total_rating = 0
-            for review in self.reviews.all().values("rating"):
-                total_rating += review["rating"]
-            return round(total_rating / count, 2)
+            return round(average_rating, 2)
 
 
 class Amenity(DateTimeModel):
