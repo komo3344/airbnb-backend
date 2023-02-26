@@ -103,7 +103,7 @@ class RoomListSerializer(serializers.ModelSerializer):
             "city",
             "price",
             "rating",
-            "get_is_owner",
+            "is_owner",
             "photos",
         )
 

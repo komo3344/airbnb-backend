@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'bookings',
     'experiences',
     'medias',
+    "wishlists",
     'direct_messages',
 ]
 
