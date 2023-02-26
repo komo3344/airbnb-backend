@@ -3,9 +3,11 @@ from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import get_object_or_404
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from medias.serializers import PhotoSerializer
 from reviews.serializers import ReviewSerializer
 from rooms import serializers
 from rooms.models import Amenity, Room
@@ -52,6 +54,8 @@ class AmenityDetail(APIView):
 
 
 class Rooms(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
     def get(self, request):
         all_rooms = Room.objects.all()
         serializer = serializers.RoomListSerializer(
@@ -69,6 +73,8 @@ class Rooms(APIView):
 
 
 class RoomDetail(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
     def get_object(self, pk):
         return get_object_or_404(Room, pk=pk)
 
@@ -104,6 +110,7 @@ class RoomDetail(APIView):
 
 
 class RoomReviews(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
     pagination_class = PageNumberPagination
 
     def get_object(self, pk):
@@ -153,22 +160,17 @@ class RoomAmenities(APIView):
 
 
 class RoomPhotos(APIView):
+
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
     def get_object(self, pk):
-        try:
-            return Room.objects.get(pk=pk)
-        except Room.DoesNotExist:
-            raise NotFound
+        return get_object_or_404(Room, pk=pk)
 
     def post(self, request, pk):
         room = self.get_object(pk)
-        if not request.user.is_authenticated:
-            raise NotAuthenticated
         if request.user != room.owner:
             raise PermissionDenied
         serializer = PhotoSerializer(data=request.data)
-        if serializer.is_valid():
-            photo = serializer.save(room=room)
-            serializer = PhotoSerializer(photo)
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(room=room)
+        return Response(serializer.data)
