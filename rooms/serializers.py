@@ -3,6 +3,7 @@ from rest_framework.relations import PrimaryKeyRelatedField
 
 from categories.models import Category
 from categories.serializers import CategorySerializer
+from medias.serializers import PhotoSerializer
 from users.serializers import TinyUserSerializer
 from .models import Amenity, Room
 
@@ -24,6 +25,7 @@ class RoomDetailSerializer(serializers.ModelSerializer):
     category = PrimaryKeyRelatedField(queryset=Category.objects.all())
     rating = serializers.SerializerMethodField()
     is_owner = serializers.SerializerMethodField()
+    photos = PhotoSerializer(many=True, read_only=True)
 
     class Meta:
         model = Room
@@ -90,6 +92,7 @@ class RoomDetailSerializer(serializers.ModelSerializer):
 class RoomListSerializer(serializers.ModelSerializer):
     rating = serializers.SerializerMethodField()
     is_owner = serializers.SerializerMethodField()
+    photos = PhotoSerializer(many=True, read_only=True)
 
     class Meta:
         model = Room
@@ -101,6 +104,7 @@ class RoomListSerializer(serializers.ModelSerializer):
             "price",
             "rating",
             "get_is_owner",
+            "photos",
         )
 
     def get_rating(self, room):
