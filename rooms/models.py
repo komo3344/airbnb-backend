@@ -63,10 +63,7 @@ class Room(DateTimeModel):
 
     def rating(self):
         average_rating = self.reviews.aggregate(Avg('rating'))['rating__avg']
-        if average_rating is None:
-            return "No Reviews"
-        else:
-            return round(average_rating, 2)
+        return 0 if average_rating is None else round(average_rating, 2)
 
 
 class Amenity(DateTimeModel):

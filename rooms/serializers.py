@@ -1,8 +1,5 @@
-from django.db import transaction
 from rest_framework import serializers
-from rest_framework.exceptions import ParseError
 from rest_framework.relations import PrimaryKeyRelatedField
-from rest_framework.serializers import ModelSerializer
 
 from categories.models import Category
 from categories.serializers import CategorySerializer
@@ -10,7 +7,7 @@ from users.serializers import TinyUserSerializer
 from .models import Amenity, Room
 
 
-class AmenitySerializer(ModelSerializer):
+class AmenitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Amenity
         fields = "__all__"
@@ -25,10 +22,19 @@ class RoomDetailSerializer(serializers.ModelSerializer):
 
     # category 필드를 PrimaryKeyRelatedField로 정의하여 CategorySerializer를 사용합니다.
     category = PrimaryKeyRelatedField(queryset=Category.objects.all())
+    rating = serializers.SerializerMethodField()
+    is_owner = serializers.SerializerMethodField()
 
     class Meta:
         model = Room
         fields = "__all__"
+
+    def get_rating(self, room):
+        return room.rating()
+
+    def get_is_owner(self, room):
+        request = self.context["request"]
+        return room.owner == request.user
 
     def validate(self, data):
         category = data.get("category")
@@ -82,6 +88,9 @@ class RoomDetailSerializer(serializers.ModelSerializer):
 
 
 class RoomListSerializer(serializers.ModelSerializer):
+    rating = serializers.SerializerMethodField()
+    is_owner = serializers.SerializerMethodField()
+
     class Meta:
         model = Room
         fields = (
@@ -90,4 +99,13 @@ class RoomListSerializer(serializers.ModelSerializer):
             "country",
             "city",
             "price",
+            "rating",
+            "get_is_owner",
         )
+
+    def get_rating(self, room):
+        return room.rating()
+
+    def get_is_owner(self, room):
+        request = self.context["request"]
+        return room.owner == request.user
