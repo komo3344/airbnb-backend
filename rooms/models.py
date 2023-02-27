@@ -61,6 +61,9 @@ class Room(DateTimeModel):
     def total_amenities(self):
         return self.amenities.count()
 
+    def total_reviews(self):
+        return self.reviews.count()
+
     def rating(self):
         average_rating = self.reviews.aggregate(Avg('rating'))['rating__avg']
         return 0 if average_rating is None else round(average_rating, 2)

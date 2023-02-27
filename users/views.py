@@ -1,10 +1,18 @@
 from django.contrib.auth import logout, authenticate, login
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.exceptions import ParseError
-from rest_framework.generics import get_object_or_404
+from rest_framework.generics import get_object_or_404, GenericAPIView
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from reviews.models import Review
+from reviews.paginations import ReviewPagination
+from reviews.serializers import ReviewSerializer
+from rooms.models import Room
+from rooms.paginations import HostRoomPagination
+from rooms.serializers import HostRoomSerializer
 from . import serializers
 from .models import User
 
@@ -90,3 +98,29 @@ class LogOut(APIView):
     def post(self, request):
         logout(request)
         return Response({"ok": "bye!"})
+
+
+class UserReviews(generics.ListAPIView):
+    serializer_class = ReviewSerializer
+    pagination_class = ReviewPagination
+
+    def get_queryset(self):
+        username = self.kwargs.get("username")
+        if User.objects.filter(username=username).exists():
+            queryset = Review.objects.filter(user__username=username).all().order_by("-created_at")
+            return queryset
+        else:
+            raise ParseError(f"No user with that nickname({username}) exists.")
+
+
+class HostRooms(generics.ListAPIView):
+    serializer_class = HostRoomSerializer
+    pagination_class = HostRoomPagination
+
+    def get_queryset(self):
+        username = self.kwargs.get("username")
+        if User.objects.filter(username=username).exists():
+            queryset = Room.objects.filter(owner__username=username).order_by("-created_at")
+            return queryset
+        else:
+            raise ParseError(f"No user with that nickname({username}) exists.")

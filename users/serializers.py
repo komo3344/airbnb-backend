@@ -41,6 +41,9 @@ class PrivateUserSerializer(ModelSerializer):
 
 
 class PublicUserSerializer(serializers.ModelSerializer):
+    total_reviews = serializers.SerializerMethodField()
+    total_rooms = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = [
@@ -50,4 +53,13 @@ class PublicUserSerializer(serializers.ModelSerializer):
             "gender",
             "language",
             "currency",
+            "total_reviews",
+            "total_rooms",
         ]
+
+    def get_total_reviews(self, user):
+        return user.total_reviews()
+
+    def get_total_rooms(self, user):
+        return user.total_rooms()
+
