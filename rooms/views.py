@@ -1,16 +1,10 @@
-from datetime import datetime
-
-from django.db.models import Q
-from django.utils import timezone
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import get_object_or_404, GenericAPIView
-from rest_framework.mixins import ListModelMixin
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from dateutil.relativedelta import relativedelta
 
 from bookings.filters import YearFilter, MonthFilter, DayFilter
 from bookings.models import Booking
@@ -19,17 +13,16 @@ from medias.serializers import PhotoSerializer
 from reviews.serializers import ReviewSerializer
 from rooms import serializers
 from rooms.models import Amenity, Room
-from rooms.serializers import AmenitySerializer
 
 
 class Amenities(APIView):
     def get(self, request):
         all_amenities = Amenity.objects.all()
-        serializer = AmenitySerializer(all_amenities, many=True)
+        serializer = serializers.AmenitySerializer(all_amenities, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = AmenitySerializer(data=request.data)
+        serializer = serializers.AmenitySerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
@@ -41,12 +34,12 @@ class AmenityDetail(APIView):
 
     def get(self, request, pk):
         amenity = self.get_object(pk)
-        serializer = AmenitySerializer(amenity)
+        serializer = serializers.AmenitySerializer(amenity)
         return Response(serializer.data)
 
     def put(self, request, pk):
         amenity = self.get_object(pk)
-        serializer = AmenitySerializer(
+        serializer = serializers.AmenitySerializer(
             amenity,
             data=request.data,
             partial=True,
@@ -164,7 +157,7 @@ class RoomAmenities(APIView):
         amenities = room.amenities.all()
         paginator = self.pagination_class()
         queryset_page = paginator.paginate_queryset(amenities, request)
-        serializer = AmenitySerializer(queryset_page, many=True)
+        serializer = serializers.AmenitySerializer(queryset_page, many=True)
         return paginator.get_paginated_response(serializer.data)
 
 
