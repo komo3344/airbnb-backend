@@ -38,3 +38,16 @@ class PrivateUserSerializer(ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+
+
+class PublicUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            "avatar",
+            "name",
+            "is_host",
+            "gender",
+            "language",
+            "currency",
+        ]
