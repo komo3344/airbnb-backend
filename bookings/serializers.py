@@ -51,3 +51,22 @@ class PublicBookingSerializer(serializers.ModelSerializer):
             "experience_time",
             "guests",
         )
+
+
+class CreateExperienceBookingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Booking
+        fields = (
+            "experience_time",
+            "guests"
+        )
+
+    # TODO 다양한 경우의 validate 추가
+    def validate_experience_time(self, value):
+        start = self.context["experience"].start
+        end = self.context["experience"].end
+        if start > value:
+            raise serializers.ValidationError("Can't book in the past!")
+        if end < value:
+            raise serializers.ValidationError("Can't book in the future!")
+        return value

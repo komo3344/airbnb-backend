@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models import Avg
+
 from common.models import DateTimeModel
 
 
@@ -40,6 +42,10 @@ class Experience(DateTimeModel):
 
     def __str__(self):
         return self.name
+
+    def rating(self):
+        average_rating = self.reviews.aggregate(Avg('rating'))['rating__avg']
+        return 0 if average_rating is None else round(average_rating, 2)
 
 
 class Perk(DateTimeModel):
