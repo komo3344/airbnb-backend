@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
     # THIRD PARTY APPS
     'rest_framework',
+    "rest_framework.authtoken",
 
     # CUSTOM APPS
     'users',
@@ -149,5 +150,6 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.SessionAuthentication",  # default authentication
         "config.authentication.TrustMeBroAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
     ]
 }
