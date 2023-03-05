@@ -148,8 +148,9 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 3,
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",  # default authentication
-        "config.authentication.TrustMeBroAuthentication",
-        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",  # drf default authentication
+        "config.authentication.TrustMeBroAuthentication",       # custom authentication
+        "rest_framework.authentication.TokenAuthentication",    # token authentication
+        "config.authentication.JWTAuthentication",              # jwt authentication
     ]
 }

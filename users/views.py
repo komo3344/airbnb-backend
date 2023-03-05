@@ -1,3 +1,5 @@
+import jwt
+from django.conf import settings
 from django.contrib.auth import logout, authenticate, login
 from rest_framework import status, generics
 from rest_framework.exceptions import ParseError
@@ -124,3 +126,26 @@ class HostRooms(generics.ListAPIView):
             return queryset
         else:
             raise ParseError(f"No user with that nickname({username}) exists.")
+
+
+class JWTLogIn(APIView):
+    def post(self, request):
+        username = request.data.get("username")
+        password = request.data.get("password")
+        if not username or not password:
+            raise ParseError
+        user = authenticate(
+            request,
+            username=username,
+            password=password,
+        )
+        if user:
+            # 유저가 복호화 할 수 있기 때문에 중요정보는 넣지 않음
+            token = jwt.encode(
+                {"pk": user.pk},
+                settings.SECRET_KEY,
+                algorithm="HS256",
+            )
+            return Response({"token": token})
+        else:
+            return Response({"error": "wrong password"})
