@@ -161,4 +161,8 @@ REST_FRAMEWORK = {
     ]
 }
 
-CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
+CORS_ALLOWED_ORIGINS = ["http://127.0.0.1:3000"]
+
+CORS_ALLOW_CREDENTIALS = True
+# POST 요청을 보낼 수 있는 웹사이트는 이 리스트에 쓰인 웹 사이트 뿐이라는 것을 알려주는 것이다.
+CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:3000"]
