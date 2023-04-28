@@ -89,9 +89,9 @@ class LogIn(APIView):
         )
         if user:
             login(request, user)
-            return Response({"ok": "Welcome!"})
+            return Response({"ok": "Welcome!"}, status=status.HTTP_200_OK)
         else:
-            return Response({"error": "wrong password"})
+            return Response({"error": "wrong password"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LogOut(APIView):
@@ -192,7 +192,6 @@ class GithubLogIn(APIView):
                 login(request, user)
                 return Response(status=status.HTTP_200_OK)
         except Exception as e:
-            print(e)
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
