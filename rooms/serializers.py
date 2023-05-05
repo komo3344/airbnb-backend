@@ -12,7 +12,7 @@ from .models import Amenity, Room
 class AmenitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Amenity
-        fields = "__all__"
+        fields = ["pk", "name", "description"]
 
 
 class RoomDetailSerializer(serializers.ModelSerializer):
